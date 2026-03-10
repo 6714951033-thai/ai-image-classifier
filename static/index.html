@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Image Classifier</title>
+</head>
+
+<body>
+
+<h2>AI Image Classifier</h2>
+
+<input type="file" id="file">
+<button onclick="predict()">Predict</button>
+
+<h3 id="result"></h3>
+
+<script>
+
+async function predict(){
+
+    const fileInput = document.getElementById("file")
+    const file = fileInput.files[0]
+
+    let formData = new FormData()
+    formData.append("file", file)
+
+    const response = await fetch("/predict",{
+        method:"POST",
+        body:formData
+    })
+
+    const data = await response.json()
+
+    document.getElementById("result").innerText =
+        "Prediction : " + data.prediction
+}
+
+</script>
+
+</body>
+</html>
