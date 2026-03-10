@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <title>AI Image Classifier</title>
@@ -7,50 +8,71 @@
 <style>
 
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#4facfe,#00f2fe);
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin:0;
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg,#667eea,#764ba2);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+color:white;
 }
 
-.container{
-    background:white;
-    padding:40px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
-    width:350px;
+.card{
+background:white;
+color:black;
+padding:40px;
+border-radius:15px;
+width:400px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
 }
 
 h1{
-    margin-bottom:20px;
+margin-bottom:10px;
 }
 
-input[type="file"]{
-    margin:20px 0;
+.subtitle{
+color:gray;
+margin-bottom:20px;
+}
+
+input{
+margin:15px 0;
 }
 
 button{
-    padding:10px 20px;
-    border:none;
-    background:#4facfe;
-    color:white;
-    font-size:16px;
-    border-radius:8px;
-    cursor:pointer;
+padding:10px 25px;
+border:none;
+background:#667eea;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
 }
 
 button:hover{
-    background:#2b8cff;
+background:#5563d1;
+}
+
+#preview{
+margin-top:20px;
+max-width:100%;
+border-radius:10px;
+display:none;
 }
 
 .result{
-    margin-top:20px;
-    font-size:18px;
-    font-weight:bold;
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+}
+
+.loading{
+margin-top:15px;
+color:gray;
+display:none;
 }
 
 </style>
@@ -58,15 +80,20 @@ button:hover{
 
 <body>
 
-<div class="container">
+<div class="card">
 
 <h1>🤖 AI Image Classifier</h1>
+<div class="subtitle">Upload image to detect object</div>
 
-<input type="file" id="file">
+<input type="file" id="file" accept="image/*" onchange="previewImage()">
 
 <br>
 
 <button onclick="predict()">Predict</button>
+
+<div class="loading" id="loading">Analyzing image...</div>
+
+<img id="preview">
 
 <div class="result" id="result"></div>
 
@@ -74,23 +101,54 @@ button:hover{
 
 <script>
 
+function previewImage(){
+
+const file = document.getElementById("file").files[0]
+
+if(file){
+
+const reader = new FileReader()
+
+reader.onload = function(e){
+
+const img = document.getElementById("preview")
+img.src = e.target.result
+img.style.display="block"
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+}
+
 async function predict(){
 
-    let fileInput = document.getElementById("file")
-    let file = fileInput.files[0]
+const fileInput = document.getElementById("file")
+const file = fileInput.files[0]
 
-    let formData = new FormData()
-    formData.append("file",file)
+if(!file){
+alert("Please select image")
+return
+}
 
-    let response = await fetch("/predict",{
-        method:"POST",
-        body:formData
-    })
+const formData = new FormData()
+formData.append("file",file)
 
-    let data = await response.json()
+document.getElementById("loading").style.display="block"
+document.getElementById("result").innerText=""
 
-    document.getElementById("result").innerText =
-        "Prediction : " + data.prediction
+const response = await fetch("/predict",{
+method:"POST",
+body:formData
+})
+
+const data = await response.json()
+
+document.getElementById("loading").style.display="none"
+document.getElementById("result").innerText="Prediction: " + data.prediction
+
 }
 
 </script>
