@@ -7,10 +7,8 @@ from model import predict
 
 app = FastAPI()
 
-# เปิดโฟลเดอร์ static
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# หน้าเว็บหลัก
 @app.get("/")
 def home():
     return FileResponse("static/index.html")
