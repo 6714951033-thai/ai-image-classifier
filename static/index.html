@@ -1,34 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>AI Image Classifier</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:0;
+}
+
+.container{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    text-align:center;
+    width:350px;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+input[type="file"]{
+    margin:20px 0;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    background:#4facfe;
+    color:white;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2b8cff;
+}
+
+.result{
+    margin-top:20px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+</style>
 </head>
 
 <body>
 
-<h2>AI Image Classifier</h2>
+<div class="container">
+
+<h1>🤖 AI Image Classifier</h1>
 
 <input type="file" id="file">
+
+<br>
+
 <button onclick="predict()">Predict</button>
 
-<h3 id="result"></h3>
+<div class="result" id="result"></div>
+
+</div>
 
 <script>
 
 async function predict(){
 
-    const fileInput = document.getElementById("file")
-    const file = fileInput.files[0]
+    let fileInput = document.getElementById("file")
+    let file = fileInput.files[0]
 
     let formData = new FormData()
-    formData.append("file", file)
+    formData.append("file",file)
 
-    const response = await fetch("/predict",{
+    let response = await fetch("/predict",{
         method:"POST",
         body:formData
     })
 
-    const data = await response.json()
+    let data = await response.json()
 
     document.getElementById("result").innerText =
         "Prediction : " + data.prediction
