@@ -15,8 +15,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def home():
     return FileResponse("static/index.html")
 
-
-# API สำหรับ AI
 @app.post("/predict")
 async def classify(file: UploadFile = File(...)):
 
